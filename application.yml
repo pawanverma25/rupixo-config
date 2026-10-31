@@ -1,0 +1,104 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/rupixo-db}
+    username: ${DB_USER:}
+    password: ${DB_PASS:}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    listener:
+      ack-mode: manual
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:29092}
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        retries: 3
+        spring.json.add.type.headers: false
+    consumer:
+      group-id: rupixo-monolith
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "dev.pawan.rupixo.*"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: java.util.LinkedHashMap
+
+  threads:
+    virtual:
+      enabled: true
+
+springdoc:
+  api-docs:
+    title: Rupixo API Documentation
+    description: This is the API documentation for the Rupixo application.
+    version: OPENAPI_3_1
+    path: /rupixo-api-docs
+
+vault:
+  master-key: wuiey98y398yh3dun3dh2yd7ncy23fy723yd3ny2343
+
+payment:
+  simulator:
+    poll-interval-ms: 5000
+    chaos-mode: NORMAL
+    methods:
+      CARD:
+        min-delay-seconds: 2
+        max-delay-seconds: 6
+        success-rate: 90
+      UPI:
+        min-delay-seconds: 1
+        max-delay-seconds: 3
+        success-rate: 95
+      NET_BANKING:
+        min-delay-seconds: 4
+        max-delay-seconds: 10
+        success-rate: 80
+    refund:
+      poll-interval-ms: 5000
+      simulator:
+        poll-interval-ms: 5000
+jwt:
+  secret-key: ${JWT_SECRET:dont-use-this-secret-in-production-ncw3e80hc389013hehurdhw09}
+  expiration: ${JWT_EXPIRATION:3600000} # 1 hour in milliseconds
+
+app:
+  rate-limiter:
+    strategy: fixed-window
+    use-case:
+      api-key:
+        limit: 200
+        window-seconds: 60
+  kafka:
+    topics:
+      payment: payment.events
+      order: order.events
+      refund: refund.events
+      settlement: settlement.events
+    outbox.poll-interval-ms: 5000
+  webhook:
+    delivery:
+      redis-key: "webhook_retry"
+      poll-batch-size: 100
+      poll-interval-ms: 1000
+      reconcile-interval-ms: 60000
+      client:
+        signature-header: X-Rupixo-Signature
+        read-timeout-ms: 5000
+        connect-timeout-ms: 5000
