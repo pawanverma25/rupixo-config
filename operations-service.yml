@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/operations-db
+    url: jdbc:postgresql://localhost:5432/rupixo-operations-db
 
 server.port: 9020

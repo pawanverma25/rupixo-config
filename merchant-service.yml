@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/merchant-db
+    url: jdbc:postgresql://localhost:5432/rupixo-merchant-db
 
 server.port: 9010
 
