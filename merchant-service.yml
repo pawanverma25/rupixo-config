@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/merchant-db
+
+server.port: 9010
+
+
+jwt:
+  secret-key: ${JWT_SECRET:dont-use-this-secret-in-production-ncw3e80hc389013hehurdhw09}
+  expiration: ${JWT_EXPIRATION:3600000} # 1 hour in milliseconds
