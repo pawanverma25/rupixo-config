@@ -8,6 +8,17 @@ app:
       - "/v1/auth/**"
       - "/webhook/**"
       - "/actuator/**"
+    jwt-routes:
+      - "/v1/auth/**"
+      - "/v1/merchants/**"
+      - "/v1/admin/**"
+      - "/actuator/**"
+      - "/webhooks/**"
+    api-key-routes:
+      - "/v1/orders/**",
+      - "/v1/payments/**",
+      - "/v1/payment/**",
+      - "/v1/vault/**"
       
   rate-limit:
     method: fixed
